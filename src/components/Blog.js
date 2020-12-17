@@ -1,14 +1,12 @@
-import React from 'react';
+import React, {Component} from 'react';
+import {Text} from 'react-native';
+import {FlatList} from 'react-navigation';
 import withObservables from '@nozbe/with-observables';
-import {
-  SafeAreaView,
-  Text,
-  FlatList,
-  Button,
-  StyleSheet,
-  Platform,
-} from 'react-native';
-import {ListItem} from '../ListItem';
+
+import Button from './helpers/Button';
+import ListItem from './helpers/ListItem';
+import styles from './helpers/styles';
+import {extractId} from '../utils';
 
 const NastyCommentsItem = ({blog, onPress}) => (
   <ListItem
@@ -30,9 +28,14 @@ const PostItem = withObservables(['post'], ({post}) => ({
   post: post.observe(),
 }))(RawPostItem);
 
-export function Blog({blog, posts, navigation}) {
-  return (
-    <SafeAreaView>
+class Blog extends Component {
+  moderate = async () => {
+    await this.props.blog.moderateAll();
+  };
+
+  render() {
+    const {blog, posts, navigation} = this.props;
+    return (
       <FlatList
         data={posts}
         renderItem={({item: post}) => (
@@ -58,23 +61,13 @@ export function Blog({blog, posts, navigation}) {
         )}
         keyExtractor={extractId}
       />
-    </SafeAreaView>
-  );
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-  button: Platform.select({android: {marginHorizontal: 12, marginBottom: 15}}),
-  postsListHeader: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginTop: 10,
-    padding: 10,
-  },
-});
 
 const enhance = withObservables(['blog'], ({blog}) => ({
   blog: blog.observe(),
   posts: blog.posts.observe(),
 }));
 
-export const BlogScreen = enhance(Blog);
+export default enhance(Blog);
