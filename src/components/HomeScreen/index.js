@@ -1,10 +1,16 @@
 import React from 'react';
-import {SafeAreaView, Text} from 'react-native';
+import {SafeAreaView} from 'react-native';
+import {useDatabase} from '../../hooks/useDatabase';
+import {useNavigation} from '@react-navigation/core';
 
 export function HomeScreen() {
+  const database = useDatabase();
+
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView>
-      <Text>HOME SCREEN</Text>
+      <BlogList database={database} navigation={navigation} />
     </SafeAreaView>
   );
 }
