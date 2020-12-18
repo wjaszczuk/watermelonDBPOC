@@ -22,4 +22,12 @@ export default class Blog extends Model {
   @action async moderateAll() {
     await this.nastyComments.destroyAllPermanently();
   }
+
+  @action async removeAll() {
+    const blogs = await this.collection.query().fetch();
+
+    const deleted = blogs.map((blog) => blog.prepareDestroyPermanently());
+
+    await this.database.batch(...deleted);
+  }
 }

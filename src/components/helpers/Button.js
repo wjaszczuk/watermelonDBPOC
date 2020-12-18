@@ -3,9 +3,9 @@ import {Button as RNButton, View} from 'react-native';
 
 import styles from './styles';
 
-const Button = ({title, onPress}) => (
+const Button = ({title, onPress, disabled = false}) => (
   <View style={styles.button}>
-    <RNButton title={title} onPress={onPress} color="#EC5B59" />
+    <RNButton title={title} onPress={onPress} color="#EC5B59" disabled={disabled}/>
   </View>
 );
 

@@ -13,8 +13,14 @@ export const createNavigation = (props) =>
         Root: {
           // We have to use a little wrapper because React Navigation doesn't pass simple props (and withObservables needs that)
           screen: ({navigation}) => {
-            const {database} = navigation.state.params;
-            return <Root database={database} navigation={navigation} />;
+            const {database, synchronize} = navigation.state.params;
+            return (
+              <Root
+                database={database}
+                navigation={navigation}
+                synchronize={synchronize}
+              />
+            );
           },
           navigationOptions: {title: 'Blogs'},
         },

@@ -26,7 +26,7 @@ export default StyleSheet.create({
     fontWeight: '500',
   },
   marginContainer: {marginVertical: 10},
-  buttonContainer: {flex: 1, flexDirection: 'row', justifyContent: 'center'},
+  buttonContainer: {flex: 1, flexDirection: 'column', justifyContent: 'center'},
   button: Platform.select({android: {marginHorizontal: 12, marginBottom: 15}}),
   listItem: {
     backgroundColor: '#f0f0f0',

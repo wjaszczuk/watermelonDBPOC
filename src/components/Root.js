@@ -14,6 +14,7 @@ class Root extends Component {
     isGenerating: false,
     search: '',
     isSearchFocused: false,
+    synchronizationInProgress: false,
   };
 
   generateWith = async (generator) => {
@@ -35,8 +36,38 @@ class Root extends Component {
 
   handleOnBlur = () => this.setState({isSearchFocused: false});
 
+  onlineSync = () => {
+    this.setState({synchronizationInProgress: true});
+    this.props.synchronize().finally(() => {
+      this.setState({synchronizationInProgress: false});
+    });
+  };
+
+  removeBlogs = async () => {
+    this.setState({synchronizationInProgress: false});
+    await this.props.database.action(async () => {
+      try {
+        const blogs = await this.props.database.collections
+          .get('blogs')
+          .query()
+          .fetch();
+
+        const deleted = blogs.map((blogs) => blogs.prepareDestroyPermanently());
+
+        await this.props.database.batch(...deleted);
+        this.setState({synchronizationInProgress: true});
+      } catch (e) {}
+      this.setState({synchronizationInProgress: false});
+    });
+  };
+
   render() {
-    const {search, isGenerating, isSearchFocused} = this.state;
+    const {
+      search,
+      isGenerating,
+      isSearchFocused,
+      synchronizationInProgress,
+    } = this.state;
     const {database, navigation} = this.props;
 
     return (
@@ -46,14 +77,36 @@ class Root extends Component {
             <Fragment>
               <Image style={styles.logo} source={logoSrc} />
               <View style={styles.marginContainer}>
-                <Text style={styles.header}>Generate:</Text>
-                <View style={styles.buttonContainer}>
-                  <Button title="100 records" onPress={this.generate100} />
-                  <Button title="10,000 records" onPress={this.generate10k} />
-                </View>
+                {!synchronizationInProgress && (
+                  <>
+                    <Text style={styles.header}>Generate:</Text>
+                    <View style={styles.buttonContainer}>
+                      <Button
+                        title="100 records"
+                        onPress={this.generate100}
+                        disabled={this.state.synchronizationInProgress}
+                      />
+                      <Button
+                        title="10,000 records"
+                        onPress={this.generate10k}
+                        disabled={this.state.synchronizationInProgress}
+                      />
+                      <Button
+                        title="Online sync"
+                        onPress={this.onlineSync}
+                        disabled={this.state.synchronizationInProgress}
+                      />
+                      <Button title="Remove blogs" onPress={this.removeBlogs} />
+                    </View>
+                  </>
+                )}
+                {synchronizationInProgress && (
+                  <Text>Online synchronization</Text>
+                )}
               </View>
             </Fragment>
           )}
+
           <TextInput
             style={{padding: 5, fontSize: 16}}
             placeholder="Search ..."
