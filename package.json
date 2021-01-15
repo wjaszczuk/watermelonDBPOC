@@ -5,7 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start",
+    "start": "react-native start -- --reset-cache",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -16,6 +16,7 @@
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-gesture-handler": "1.9.0",
+    "react-native-prompt-android": "^1.1.0",
     "react-native-reanimated": "1.13.2",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "2.16.1",
